@@ -6,12 +6,13 @@ Able to extract the USM files, decrypt the tracks and convert them into readable
 The final MKV file can then be played like a small movie, with the subtitles correctly formatted like in the game.
 Sometimes, subtitles can be desynchronized with the audio, but that's also the case in game (and not this program's fault).
 
-#### Cutscenes from version 1.0 to 3.4 can be decrypted.
+#### Cutscenes from version 1.0 to 5.1 can be decrypted.
 *Also includes CBT3, which has the same files than the live version*
 
 If you want to extract newer cutscenes but the `versions.json` in the released zip is outdated, simply download the updated file in the project tree ([here](https://raw.githubusercontent.com/ToaHartor/GI-cutscenes/main/versions.json)) and replace the file.
 This file will be updated with the version key every time a new version drops.
 
+If some keys are not available yet, please check the pull requests to see if someone has already submitted them.
 
 ### Feel free to make a pull request if you have some keys unavailable in the versions file, any help is welcome on that part.
 
@@ -31,7 +32,7 @@ As a first C# program, I thought it would be a good idea to rewrite it. I haven'
 
 ## Build
 
-This program uses the .NET framework version 7.0, so you will need the .NET SDK.
+This program uses the .NET framework version 6.0, so you will need the .NET SDK.
 You can open this project in Visual Studio 2022 and build the solution, or use the dotnet CLI : `dotnet publish -c Release -r [platform]`.
 Otherwise, you can also modify the script `build-all.sh` with the desired runtimes.
 
@@ -58,7 +59,7 @@ However, if you wish to use other merging solutions than the one integrated, you
 `appsettings.json` contains a configuration sample with the following keys :
 - "MkvMergePath" : The path where mkvmerge is installed. Leave it empty if you installed mkvtoolnix (the package/program providing mkvmerge) in the default path. However, change it to the path of the mkvmerge file in case you're using a different installation path or you're using the portable MKVToolNix version.
 - "FfmpegPath" : The path to the ffmpeg binary. Leave it empty if the binary is in the PATH of your operating system.
-- "SubsFolder" : The path of the folder containing the subtitles of the video divided into language folders. Default is "./GenshinData/Subtitle", the right folder if you copy [this repository](https://github.com/Dimbreath/GenshinData) in the same folder than the tool. You can follow the next section to clone the repository with the right path.
+- "SubsFolder" : The path of the folder containing the subtitles of the video divided into language folders. Default is "./GenshinData/Subtitle", the right folder if you copy [this repository](https://gitlab.com/Dimbreath/AnimeGameData) in the same folder than the tool. You can follow the next section to clone the repository with the right path.
 - "SubsStyle" : The style of the subtitles, according to the SubStation Alpha file format. If you need to modify the size, color or position, you can modify the parameters of it.
 
 #### Clone the subtitles repository
@@ -92,6 +93,7 @@ Several options are available for most of the commands :
 - `--no-cleanup` disables the suppression of the extracted files after merging
 - `--mkv-engine` specifies the merging program used (either `internal`, `mkvmerge` or `ffmpeg`, using the internal method by default)
 - `--audio-format` and `--video-format` can be used to select codecs. If at least one option is chosen, **the merging engine is changed to FFMPEG**.
+- `--audio-lang` allow to specify audio track language in the output, allowed values are `[chi,eng,jpn,kor]`
 
 Maintenance commands and options:
 - `update` retrieves the latest `versions.json` file from the repository and checks if a new version has to be downloaded. It can take several optional parameters as follows :
@@ -106,5 +108,6 @@ Maintenance commands and options:
 - `GICutscenes batchDemux cutscenes/ -o ./output -m -s -e ffmpeg` will extract every USM file into the output directory, merging the files (`-m`) and the subs (`-s`) using FFMPEG (`-e`).
 - `GICutscenes demuxUsm hello.usm -b 00112233 -a 44556677` decrypts the file `hello.usm` with `key1=00112233` and `key2=44556677` and extracts the tracks.
 - `GICutscenes convertHca hello_0.hca` decodes the file and converts it into a WAV file
+- `GICutscenes demuxUsm "[Path to .usm file]" --merge --subs --audio-lang "jpn,eng"` convert single USM file, include subtitles, include only JPN and ENG audio tracks
 
 The video is extracted as an IVF file (which makes codec detection (VP9) easier for mkvmerge). In order to watch it, you can open it into VLC or change the extension to `.m2v`.
